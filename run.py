@@ -56,7 +56,7 @@ def setup_ssh_port_forwarding(node, remote_port, local_port):
     return subprocess.Popen(ssh_command, shell=True)
 
 
-def print_usage_examples(port):
+def print_usage_examples(port, model_name: str):
     print("\n=====\nTRY IT OUT AND PASTE THE FOLLOWING IN A TERMINAL WINDOW:")
     #     python_example = f"""
     # Python Example:
@@ -81,7 +81,7 @@ curl http://localhost:{port}/v1/chat/completions \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer token-abc123" \\
   -d '{{
-    "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    "model": f"{model_name}",
     "messages": [
       {{"role": "system", "content": "Respond friendly to the user."}},
       {{"role": "user", "content": "Hello World!"}}
@@ -93,10 +93,18 @@ curl http://localhost:{port}/v1/chat/completions \\
     print(curl_example)
     print("=====\n\n")
 
+    # Save the curl example to a temporary log file
+    temp_log_file = "tmp/port_num.log"
+    os.makedirs(os.path.dirname(temp_log_file), exist_ok=True)
+    with open(temp_log_file, 'w') as file:
+        file.write(curl_example)
+    print(f"Curl example saved to {temp_log_file}")
+
 
 @hydra.main(version_base=None, config_path='.', config_name='config')
 def main(cfg: DictConfig):
     time_ = cfg['time']
+    model_name = cfg['model_configs']['serve']
     slurm_script, slurm_path = convert_yaml_to_slurm(cfg)
     print(slurm_script)
     print(f"Submitting Slurm job with time of {time_} hours...")
@@ -125,7 +133,7 @@ def main(cfg: DictConfig):
     print("You can now use this endpoint in your code to interact with the API.")
     print(f"\nThe server will run for approximately {time_} hours.")
 
-    print_usage_examples(local_port)
+    print_usage_examples(local_port, model_name=model_name)
 
     print("\nPress Ctrl+C to stop the SSH port forwarding and exit.")
 
