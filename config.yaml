@@ -1,8 +1,8 @@
 defaults:
-  - model_configs: Meta-Llama-3.1-8B-Instruct #Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct
+  - model_configs:  Google-Gemma-2-27b-it #Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct, Google-Gemma-2-27b-it
 
 # how many hours to keep the API server running for (increasing this will dramatically increase wait time)
-time: 4
+time: 1
 
 # to run bigger models we will require to use the pli cluster
 use_pli: True # set to True if you want to use the PLI cluster

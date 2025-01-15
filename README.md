@@ -176,6 +176,9 @@ ssh -N -L localhost:{local_port}:{node}:{remote_port} {username}@{node}
 
 Where `local_port` can be anything, `node` is your gpu node, `remote_port` is 8000, and `username` is your NetID. 
 
+7. NOTE: sometimes it can take a little bit of time for the server to load up the model. Especially for larger models. 
+Recommendation: wait a few minutes before trying to query the API.
+
 
 #### Using the API
 
