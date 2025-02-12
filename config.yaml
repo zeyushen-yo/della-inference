@@ -1,13 +1,23 @@
+### ----- Begin Common Configurables ----- ###
+
 defaults:
-  - model_configs:  Google-Gemma-2-27b-it #Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct, Google-Gemma-2-27b-it
+  # Meta: Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct
+  # Microsoft: Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct
+  # Alphabet: Google-Gemma-2-27b-it
+  - model_configs:  Google-Gemma-2-27b-it
 
 # how many hours to keep the API server running for (increasing this will dramatically increase wait time)
 time: 1
 
+# where the fail emails should go (otherwise Venia gets them!)
+# mail_user: null@null.null
+
 # to run bigger models we will require to use the pli cluster
-use_pli: True # set to True if you want to use the PLI cluster
+use_pli: True # set to True if you want to use the pli cluster
 # use_pli_partition: pli
-# use_pli_account: False # for backwards compatibility; leave 'False' if you are running as yourself
+# use_pli_account: False # for backwards compatibility; leave False if you are running as yourself
+
+### ----- End Common Configurables ----- ###
 
 ### DO NOT CHANGE THE BELOW UNLESS YOU KNOW WHAT YOU ARE DOING ###
 # determine if you want to run it on Azure (changes slurm)
