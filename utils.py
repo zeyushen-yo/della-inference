@@ -20,8 +20,18 @@ def convert_yaml_to_slurm(cfg: DictConfig):
     use_pli = cfg['use_pli']
     if use_pli:
         list_slurm = slurm_script.split('\n')
-        list_slurm.insert(3, '#SBATCH --partition=pli')
-        list_slurm.insert(4, '#SBATCH --account=hal')
+        
+        partition = 'pli' # backwards compatibility default
+        if 'use_pli_partition' in cfg:
+            partition = cfg['use_pli_partition']
+        list_slurm.insert(3, f"#SBATCH --partition={partition}")
+        
+        account = 'hal' # backwards compatibility default
+        if 'use_pli_account' in cfg:
+            account = cfg['use_pli_account']
+        if account: # could be False - this might be the weirdest backwards compatibility I've ever written :(
+            list_slurm.insert(4, f"#SBATCH --account={account}")
+        
         slurm_script = '\n'.join(list_slurm)
     return slurm_script, slurm_path
 
