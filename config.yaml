@@ -6,6 +6,8 @@ time: 1
 
 # to run bigger models we will require to use the pli cluster
 use_pli: True # set to True if you want to use the PLI cluster
+# use_pli_partition: pli
+# use_pli_account: False # for backwards compatibility; leave 'False' if you are running as yourself
 
 ### DO NOT CHANGE THE BELOW UNLESS YOU KNOW WHAT YOU ARE DOING ###
 # determine if you want to run it on Azure (changes slurm)
