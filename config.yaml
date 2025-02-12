@@ -10,7 +10,8 @@ defaults:
 time: 1
 
 # where the fail emails should go (otherwise Venia gets them!)
-# mail_user: null@null.null
+# model_configs:
+#   mail_user: null@null.null
 
 # to run bigger models we will require to use the pli cluster
 use_pli: True # set to True if you want to use the pli cluster
