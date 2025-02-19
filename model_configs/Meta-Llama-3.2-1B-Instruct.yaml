@@ -1,0 +1,15 @@
+defaults:
+  - defaults
+  - _self_
+
+job_name: vllm_llama_3.2_1b_instruct
+output: vllm-llama-3.2-1b-instruct-%j.log
+serve: meta-llama/Llama-3.2-1B-Instruct
+
+# compute
+tensor_parallel_size: 1
+mem_per_gpu: 16G
+gres: gpu:1
+
+# azure port
+azure_port: 6778
