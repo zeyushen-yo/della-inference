@@ -18,4 +18,5 @@ azure_user: ${azure_user} # you'll know if this is applicable. if you have to as
 
 # additional commands
 mail_type: fail
-mail_user: veniamin@princeton.edu  # TODO: decide if this is the right email? maybe we get a communal email.
+mail_user: veniamin@princeton.edu  # TODO: decide if this is the right email? maybe we get a communal email. or leave it blank?
+my_hf_home: /scratch/gpfs/bs6865/della-inference/_models  # TODO: should we leave this blank?
