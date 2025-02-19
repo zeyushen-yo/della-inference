@@ -42,6 +42,7 @@ This inference API currently supports the following models:
 |------------|-------------------|
 | Meta Llama-3.1-70B-Instruct | [🤗 Model](https://huggingface.co/meta-llama/Meta-Llama-3.1-70B-Instruct) |
 | Meta Llama-3.1-8B-Instruct | [🤗 Model](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct) |
+| Meta Llama-3.2-1B-Instruct | [🤗 Model](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) |
 | microsoft/Phi-3-mini-128k-instruct | [🤗 Model](https://huggingface.co/microsoft/Phi-3-mini-128k-instruct) |
 | microsoft/Phi-3-medium-128k-instruct | [🤗 Model](https://huggingface.co/microsoft/Phi-3-medium-128k-instruct) |
 
@@ -57,7 +58,7 @@ To request support for additional models, please open an issue or submit a pull 
 
 2. Load the Anaconda module if not yet loaded:
    ```
-   module load anaconda3/2023.9
+   module load anaconda3/2024.10
    ```
 
 3. Create a new conda environment (please keep using `vllm` as the env name):
@@ -92,15 +93,33 @@ To begin, you'll need to start an inference server for the model you want to use
 `config.yaml` looks like, this is where you'll be defining which model you want to use and how long to set it up for.
 
 ```yaml
-defaults:
-  - model_configs: Meta-Llama-3.1-8B-Instruct #Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct
+### ----- Begin Common Configurables ----- ###
 
-# determine if you want to run it on Azure (changes slurm)
-azure: True
-azure_user: ??? # add your azure user
-# how many hours to run for
+defaults:
+  # Meta: Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Meta-Llama-3.2-1B-Instruct
+  # Microsoft: Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct
+  # Alphabet: Google-Gemma-2-27b-it
+  - model_configs: Google-Gemma-2-27b-it
+
+# how many hours to keep the API server running for (increasing this will dramatically increase wait time)
 time: 1
 
+# where the fail emails should go (otherwise Venia gets them!)
+# model_configs:
+#   mail_user: null@null.null
+#   my_hf_home: /scratch/gpfs/<netid>/.cache/huggingface # If set, you can use `echo $HF_HOME`
+
+# to run bigger models we will require to use the pli cluster
+use_pli: True # set to True if you want to use the pli cluster
+# use_pli_partition: pli
+# use_pli_account: False # for backwards compatibility; leave False if you are running as yourself
+
+### ----- End Common Configurables ----- ###
+
+### DO NOT CHANGE THE BELOW UNLESS YOU KNOW WHAT YOU ARE DOING ###
+# determine if you want to run it on Azure (changes slurm)
+use_azure: False
+azure_user: venia # NOTE: !!! add your azure user !!!
 # most likely ignore (edit only if you change templates)
 slurm_dir: templates
 slurm_fname: slurm_template.txt
