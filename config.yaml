@@ -13,6 +13,8 @@ time: 1
 # model_configs:
 #   mail_user: null@null.null
 #   my_hf_home: /scratch/gpfs/<netid>/.cache/huggingface # If set, you can use `echo $HF_HOME`
+#   # my_local_model will overwrite the "serve" parameter to vllm with a local model; required if not using a cached HF model
+#   my_local_model: /scratch/gpfs/<netid>/path/to/your/model 
 
 # to run bigger models we will require to use the pli cluster
 use_pli: True # set to True if you want to use the pli cluster
