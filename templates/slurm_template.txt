@@ -23,7 +23,7 @@ export HF_HOME={{ my_hf_home }}
 FREE_PORT=$(get_free_port)
 
 # Start vllm serve
-vllm serve {{ serve }} --tensor-parallel-size {{ tensor_parallel_size }} --quantization {{ quantization }}
+vllm serve {{ my_local_model or serve }} --tensor-parallel-size {{ tensor_parallel_size }} --quantization {{ quantization }}
 
 # Wait for the server to start (adjust sleep time if needed)
 sleep 10
