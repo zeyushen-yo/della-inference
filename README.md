@@ -104,7 +104,7 @@ defaults:
 # how many hours to keep the API server running for (increasing this will dramatically increase wait time)
 time: 1
 
-# where the fail emails should go (otherwise Venia gets them!)
+# where the fail emails should go
 # model_configs:
 #   mail_user: null@null.null
 #   my_hf_home: /scratch/gpfs/<netid>/.cache/huggingface # If set, you can use `echo $HF_HOME`
@@ -119,7 +119,7 @@ use_pli: True # set to True if you want to use the pli cluster
 ### DO NOT CHANGE THE BELOW UNLESS YOU KNOW WHAT YOU ARE DOING ###
 # determine if you want to run it on Azure (changes slurm)
 use_azure: False
-azure_user: venia # NOTE: !!! add your azure user !!!
+azure_user: azureuser # NOTE: !!! add your azure user !!!
 # most likely ignore (edit only if you change templates)
 slurm_dir: templates
 slurm_fname: slurm_template.txt
