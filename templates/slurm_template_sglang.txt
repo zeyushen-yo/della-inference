@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#SBATCH --job-name={{ job_name }}
+#SBATCH --output={{ output }}
+#SBATCH --nodes={{ nodes }}
+#SBATCH --ntasks-per-node={{ ntasks_per_node }}
+#SBATCH --gpus={{ tp }}
+#SBATCH --cpus-per-task={{ cpus_per_task }}
+#SBATCH --mem={{ mem }}
+#SBATCH --time={{ time }}
+#SBATCH -e %x-%j.err
+
+# Intentionally no 'set -euo pipefail' per user preference
+
+export HF_HUB_OFFLINE=1
+export HF_HOME={{ hf_home }}
+
+# Activate environment
+source {{ venv_path }}/bin/activate
+
+# Conservative defaults for cluster reliability
+export SGLANG_TORCH_COMPILE=0
+
+PORT={{ port }}
+echo "Launching SGLang on $SLURMD_NODENAME:$PORT (TP={{ tp }})"
+
+python -m sglang.launch_server \
+  --host 0.0.0.0 --port "$PORT" \
+  --model "{{ model_path }}" \
+  --tp {{ tp }} \
+  {{ extra_args }}
+
+# Keep the script alive as the server runs in-foreground
+wait
+
+

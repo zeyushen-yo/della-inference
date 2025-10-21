@@ -1,0 +1,31 @@
+defaults:
+  - defaults
+  - _self_
+
+backend: sglang
+
+# for Hydra defaults compatibility (not used by SGLang template)
+tensor_parallel_size: 2
+
+# slurm
+job_name: sglang_gpt_oss_120b
+output: sglang-gpt-oss-120b-%j.log
+
+# model
+model_path: ${oc.env:MODEL_PATH,/path/to/model}
+tp: ${oc.env:TP,2}
+port: ${oc.env:SGLANG_PORT,30000}
+
+# env/paths
+venv_path: ${oc.env:VENV_PATH,/path/to/venv}
+hf_home: ${oc.env:HF_HOME,/path/to/hf_home}
+extra_args: "--attention-backend triton"
+
+# compute
+nodes: 1
+ntasks_per_node: 1
+cpus_per_task: 16
+mem: ${oc.env:MEM,512G}
+time: "12:00:00"
+
+

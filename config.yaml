@@ -4,7 +4,7 @@ defaults:
   # Meta: Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Meta-Llama-3.2-1B-Instruct
   # Microsoft: Phi-3-mini-128k-instruct, Phi-3-medium-128k-instruct
   # Alphabet: Google-Gemma-2-27b-it
-  - model_configs: Google-Gemma-2-27b-it
+  - model_configs: GPT-OSS-120B-SGLang
 
 # how many hours to keep the API server running for (increasing this will dramatically increase wait time)
 time: 1
@@ -18,8 +18,8 @@ time: 1
 
 # to run bigger models we will require to use the pli cluster
 use_pli: True # set to True if you want to use the pli cluster
-# use_pli_partition: pli
-# use_pli_account: False # for backwards compatibility; leave False if you are running as yourself
+use_pli_partition: pli-c
+use_pli_account: False # for backwards compatibility; leave False if you are running as yourself
 
 ### ----- End Common Configurables ----- ###
 
@@ -29,5 +29,5 @@ use_azure: False
 azure_user: venia # NOTE: !!! add your azure user !!!
 # most likely ignore (edit only if you change templates)
 slurm_dir: templates
-slurm_fname: slurm_template.txt
+slurm_fname: slurm_template_sglang.txt
 slurm_azure_fname: slurm_azure_template.txt

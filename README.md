@@ -348,3 +348,26 @@ If you want to add new models please add a pull request and I will add them.
 
 - I did not develop this as a tool so far so we can think about what makes sense in terms of shared directories to store models, CLI arguments to customize Slurm scripts etc. 
 - This should give a complete example of how to set up an inference server and use it on Della. It should now be easy to do the same for a new model and using your own directories. 
+
+# della-inference
+
+## Running SGLang (GPT-OSS-120B)
+
+- Ensure your environment with SGLang is activated.
+- Update `config.yaml` defaults to `model_configs: GPT-OSS-120B-SGLang` (already set).
+- Submit the serving job and auto-port-forward:
+
+```bash
+python run.py
+```
+
+- The script will print a curl example. For SGLang it uses the native `/generate` endpoint.
+
+## Offline setup (wheelhouse + venv)
+
+- On a login node with internet, prepare wheels and cache:
+  - `scripts/sglang/01_prepare_on_login.sh`
+- On compute nodes without internet, create/refresh the venv offline:
+  - `scripts/sglang/02_make_venv_offline.sh`
+
+Adjust the variables in those scripts (wheelhouse path, HF Home, model snapshot path) to your environment before running.

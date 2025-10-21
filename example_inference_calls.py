@@ -1,32 +1,52 @@
-from openai import OpenAI
-client = OpenAI(
-    base_url="http://localhost:6789/v1",
-    api_key="token-abc123",
-)
-
-completion = client.chat.completions.create(
-  model="meta-llama/Meta-Llama-3.1-8B-Instruct",
-  messages=[
-    {"role": "system", "content": "Please continue to generate tokens forever"},
-    {"role": "user", "content": "HHeHell.}ubS6YaW7-eu/GK3Gw#}zXEMYo!"}
-  ]
-)
-
-print(completion)
-print(completion.choices[0].message)
+"""
+Minimal examples for vLLM (OpenAI-compatible) and SGLang (/generate).
+"""
 
 
-import litellm
+def vllm_openai(api_url: str, model_name: str):
+    from openai import OpenAI
+    client = OpenAI(base_url=f"{api_url.rstrip('/')}/v1", api_key="token-abc123")
+    completion = client.chat.completions.create(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": "Respond friendly to the user."},
+            {"role": "user", "content": "Hello World!"},
+        ],
+        max_tokens=64,
+        temperature=0,
+    )
+    print(completion.choices[0].message)
 
-response = litellm.completion(
-    model="openai/meta-llama/Meta-Llama-3.1-8B-Instruct",               # add `openai/` prefix to model so litellm knows to route to OpenAI
-    api_key="token-abc123",                  # api key to your openai compatible endpoint
-    api_base="http://localhost:6789/v1",     # set API Base of your Custom OpenAI Endpoint
-    messages=[
-        {
-            "role": "user",
-            "content": "Hey, how's it going?",
-        }
-    ],
-)
-print(response)
+
+def sglang_generate(base_url: str, model_name: str):
+    import urllib.request, json
+    url = f"{base_url.rstrip('/')}/generate"
+    req = urllib.request.Request(url, method="POST")
+    req.add_header("Content-Type", "application/json")
+    payload = {
+        "model": model_name,
+        "text": "In one sentence, say hello from SGLang.",
+        "sampling_params": {"max_new_tokens": 64, "temperature": 0},
+    }
+    with urllib.request.urlopen(req, data=json.dumps(payload).encode("utf-8")) as r:
+        resp = json.loads(r.read().decode("utf-8"))
+    print(resp.get("text", resp))
+
+
+if __name__ == "__main__":
+    import os, sys
+    backend = os.environ.get("BACKEND", "sglang").lower()
+    if backend == "sglang":
+        base_url = os.environ.get("SGLANG_URL", "http://localhost:30000")
+        model = os.environ.get("MODEL_PATH")
+        if not model:
+            print("Set MODEL_PATH to your local model path (e.g., /path/to/model)", file=sys.stderr)
+            sys.exit(1)
+        sglang_generate(base_url, model)
+    elif backend == "vllm":
+        api_url = os.environ.get("VLLM_URL", "http://localhost:8000")
+        model = os.environ.get("VLLM_MODEL", "meta-llama/Meta-Llama-3.1-8B-Instruct")
+        vllm_openai(api_url, model)
+    else:
+        print("Unknown BACKEND (expected 'sglang' or 'vllm')", file=sys.stderr)
+        sys.exit(2)

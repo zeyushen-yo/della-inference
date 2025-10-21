@@ -57,7 +57,7 @@ def setup_ssh_port_forwarding(node, remote_port, local_port):
     return subprocess.Popen(ssh_command, shell=True)
 
 
-def print_usage_examples(port, model_name: str):
+def print_usage_examples(port, model_name: str, backend: str):
     print("\n=====\nTRY IT OUT AND PASTE THE FOLLOWING IN A TERMINAL WINDOW:")
     #     python_example = f"""
     # Python Example:
@@ -70,17 +70,28 @@ def print_usage_examples(port, model_name: str):
     # completion = client.chat.completions.create(
     #   model="meta-llama/Meta-Llama-3.1-8B-Instruct",
     #   messages=[
-    #     {{"role": "system", "content": "Respond friendly to the user."}},
-    #     {{"role": "user", "content": "Hello World!"}}
+    #     {"role": "system", "content": "Respond friendly to the user."},
+    #     {"role": "user", "content": "Hello World!"}
     #   ]
     # )
     # print(completion.choices[0].message)
     # """
 
-    curl_example = f"""
-curl http://localhost:{port}/v1/chat/completions \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer token-abc123" \\
+    if backend == 'sglang':
+        curl_example = f"""
+curl http://localhost:{port}/generate \
+  -H "Content-Type: application/json" \
+  -d '{{
+    "model": "{model_name}",
+    "prompt": "Say hello from SGLang.",
+    "sampling_params": {{"max_new_tokens": 64, "temperature": 0}}
+  }}'
+"""
+    else:
+        curl_example = f"""
+curl http://localhost:{port}/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token-abc123" \
   -d '{{
     "model": f"{model_name}",
     "messages": [
@@ -105,7 +116,9 @@ curl http://localhost:{port}/v1/chat/completions \\
 @hydra.main(version_base=None, config_path='.', config_name='config')
 def main(cfg: DictConfig):
     time_ = cfg['time']
-    model_name = cfg['model_configs']['serve']
+    model_cfg = cfg['model_configs']
+    backend = model_cfg.get('backend', 'vllm')
+    model_name = model_cfg.get('serve', model_cfg.get('model_path', 'model'))
     slurm_script, slurm_path = convert_yaml_to_slurm(cfg)
     print(slurm_script)
     print(f"Submitting Slurm job with time of {time_} hours...")
@@ -125,16 +138,19 @@ def main(cfg: DictConfig):
     print("API server should now be running")
 
     local_port = get_free_port()
-    remote_port = '8000'  # This is the port vLLM uses by default
+    remote_port = str(model_cfg.get('port', 8000))
 
     print(f"Setting up SSH port forwarding from local port {local_port} to remote port {remote_port} on {node}")
     ssh_process = setup_ssh_port_forwarding(node, remote_port, local_port)
 
-    print(f"\nAPI is now available at: http://localhost:{local_port}/v1")
+    if backend == 'sglang':
+        print(f"\nAPI is now available at: http://localhost:{local_port}")
+    else:
+        print(f"\nAPI is now available at: http://localhost:{local_port}/v1")
     print("You can now use this endpoint in your code to interact with the API.")
     print(f"\nThe server will run for approximately {time_} hours.")
 
-    print_usage_examples(local_port, model_name=model_name)
+    print_usage_examples(local_port, model_name=model_name, backend=backend)
 
     print("\nPress Ctrl+C to stop the SSH port forwarding and exit.")
 
